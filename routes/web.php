@@ -14,8 +14,10 @@
 Route::get('/', 'PublicController@index')->name('index');
 Route::get('post/{post}', 'PublicController@singlePost')->name('singlePost');
 Route::get('about', 'PublicController@about')->name('about');
-Route::get('contact', 'PublicController@contact')->name('contact');
 
+
+
+Route::get('contact', 'PublicController@contact')->name('contact');
 Route::post('contact', 'PublicController@contactPost')->name('contactPost');
 
 Auth::routes();
@@ -63,8 +65,12 @@ Route::prefix('admin')->group(function(){
 
     Route::get('product/{id}', 'AdminController@editProduct')->name('adminEditProduct');
     Route::post('product/{id}', 'AdminController@editProductPost')->name('adminEditProduct');
+
+    Route::post('product/{id}/delete', 'AdminController@deleteProduct')->name('adminDeleteProduct');
 });
 
 Route::prefix('shop')->group(function(){
     Route::get('/', 'ShopController@index')->name('shop.index');
+    Route::get('product/{id}', 'ShopController@singleProudct')->name('shop.singleProduct');
+    Route::get('product/{id}/order', 'ShopController@orderProduct')->name('shop.orderProduct');
 });
