@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Product;
-
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
 use PayPal\Api\Item;
@@ -14,15 +13,6 @@ use PayPal\Api\Payer;
 use PayPal\Api\Payment;
 use PayPal\Api\RedirectUrls;
 use PayPal\Api\Transaction;
-
-
-// use PayPal\Api\Amount;
-// use PayPal\Api\Details;
-// use PayPal\Api\ExecutePayment;
-// use PayPal\Api\Payment;
-// use PayPal\Api\PaymentExecution;
-// use PayPal\Api\Transaction;
-
 use App\Facade\PayPal;
 use PHPUnit\TextUI\ResultPrinter;
 use PayPal\Api\PaymentExecution;
@@ -37,7 +27,7 @@ class ShopController extends Controller
         return view('shop.index', compact('products'));
     }
 
-    public function singleProudct($id)
+    public function singleProduct($id)
     {
         $product = Product::findOrFail($id);
         return view('shop.singleProduct', compact('product'));
@@ -159,6 +149,8 @@ class ShopController extends Controller
             // Add the above transaction object inside our Execution object.
             $execution->addTransaction($transaction);
 
+            
+
             try {
                 // Execute the payment
                 // (See bootstrap.php for more on `ApiContext`)
@@ -178,16 +170,25 @@ class ShopController extends Controller
                     ->bcc('webshop-admin@blog-w-shop.test')
                     ->send(new SendMailPurchase($paymentInfo));
 
+                    // Mail::send('emails.cancelOrder', array('key' => 'value'), function ($message)
+                    // {
+                    //     $message->from('xxxxx@xxxx.com');
+                    //     $message->to('xxxxx@xxxx.com', 'John Smith')->subject('Welcome!');
+                    // });
+
                     //TODO:here you can redirect user to successful payment
+                    // dump($paymentInfo); die;
 
                 } catch (\Exception $ex) {
-                    return redirect(route('shop.index'));
+                    
+
+                    return "payment 2?"; //It throws this exception <-
                 }
             } catch (\Exception $ex) {
                 return redirect(route('shop.index'));
             }
 
-            return redirect(route('shop.index'));
+            return redirect(route('shop.index'));;
         
     }
 
