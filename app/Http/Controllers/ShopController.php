@@ -26,6 +26,8 @@ use PayPal\Api\Transaction;
 use App\Facade\PayPal;
 use PHPUnit\TextUI\ResultPrinter;
 use PayPal\Api\PaymentExecution;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMailPurchase;
 
 class ShopController extends Controller
 {
@@ -165,23 +167,27 @@ class ShopController extends Controller
                 // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
                 print("Executed Payment 1" . $payment->getId() . "Results: " . $result);
 
+
+
                 try {
                     $payment = Payment::get($paymentId, $apiContext);
+
+                    $paymentInfo = json_decode($payment);
+
+                    Mail::to($paymentInfo->payer->payer_info->email)
+                    ->bcc('webshop-admin@blog-w-shop.test')
+                    ->send(new SendMailPurchase($paymentInfo));
+
+                    //TODO:here you can redirect user to successful payment
+
                 } catch (\Exception $ex) {
-                    // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-                    print("Get Payment 1" );
-                    exit(1);
+                    return redirect(route('shop.index'));
                 }
             } catch (\Exception $ex) {
-                // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-                print("Executed Payment 2");
-                exit(1);
+                return redirect(route('shop.index'));
             }
 
-            // NOTE: PLEASE DO NOT USE RESULTPRINTER CLASS IN YOUR ORIGINAL CODE. FOR SAMPLE ONLY
-            print("Get Payment 2" . $payment->getId());
-
-            return $payment;
+            return redirect(route('shop.index'));
         
     }
 

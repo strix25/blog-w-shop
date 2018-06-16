@@ -11,14 +11,17 @@ class SendMailPurchase extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $paymentInfo;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+
+    public function __construct($paymentInfo)
     {
-        //
+        $this->paymentInfo = $paymentInfo;
     }
 
     /**
@@ -28,6 +31,10 @@ class SendMailPurchase extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this
+            ->from('sales@blog-w-shop.test')
+            ->view('email.purchase')->with([
+                'paymentInfo' => $this->paymentInfo
+            ]);
     }
 }
